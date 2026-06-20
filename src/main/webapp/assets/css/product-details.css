@@ -1,0 +1,50 @@
+.details-container {
+    display: flex;
+    gap: 40px;
+    padding: 40px;
+}
+
+/* IMAGE */
+.image-section img {
+    width: 350px;
+    border-radius: 10px;
+}
+
+/* INFO */
+.info-section {
+    max-width: 400px;
+}
+
+.price {
+    color: #2E7D32;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.desc {
+    margin-top: 10px;
+    color: #555;
+}
+
+/* SIZE BUTTONS */
+.sizes {
+    margin-top: 20px;
+}
+
+.size-btn {
+    margin: 5px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+}
+
+/* ADD TO CART */
+.add-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #2E7D32;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}

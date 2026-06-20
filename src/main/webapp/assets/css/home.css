@@ -1,0 +1,36 @@
+.hero {
+    background-color: #e8f5e9;
+    text-align: center;
+    padding: 60px;
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: 36px;
+}
+
+.container {
+    padding: 40px;
+}
+
+.product-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card img {
+    width: 100%;
+}

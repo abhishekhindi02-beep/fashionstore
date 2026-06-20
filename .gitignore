@@ -1,0 +1,18 @@
+# Build directory
+target/
+*.class
+
+# Eclipse metadata (optional but recommended to ignore so others can import the project cleanly)
+.metadata
+.settings/
+.classpath
+.project
+
+# IntelliJ / VS Code metadata
+.idea/
+*.iml
+.vscode/
+
+# OS files
+Thumbs.db
+.DS_Store
