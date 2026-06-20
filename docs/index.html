@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FashionStore - Discover premium clothes, shoes, and accessories. Experience high-end fashion design.">
+    <title>FashionStore - Discover Your Style</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/products.css">
+</head>
+<body>
+
+    <!-- GLOBAL NAVBAR -->
+    <header id="global-header"></header>
+
+    <!-- HERO SECTION -->
+    <div class="container" style="padding-bottom: 0;">
+        <section class="hero fade-in">
+            <h1>Discover Your True Style</h1>
+            <p>Elevate your wardrobe with premium, carefully curated fashion essentials for every single occasion.</p>
+            <a href="products.html" class="btn">Shop The Collection</a>
+        </section>
+    </div>
+
+    <!-- CATEGORIES STRIP -->
+    <main class="container">
+        <section class="section-title-row">
+            <h2>Shop by Category</h2>
+        </section>
+        
+        <div class="category-strip">
+            <div class="category-card" onclick="window.location.href='products.html?category=1'">
+                <img src="assets/images/tshirts.jpg.png" alt="Men's Fashion">
+                <div class="category-content">
+                    <span>Collection</span>
+                    <h3>Men's Wear</h3>
+                </div>
+            </div>
+            
+            <div class="category-card" onclick="window.location.href='products.html?category=2'">
+                <img src="assets/images/womendress.jpg.png" alt="Women's Fashion">
+                <div class="category-content">
+                    <span>Collection</span>
+                    <h3>Women's Wear</h3>
+                </div>
+            </div>
+
+            <div class="category-card" onclick="window.location.href='products.html?category=3'">
+                <img src="assets/images/watch.jpg.png" alt="Accessories">
+                <div class="category-content">
+                    <span>Premium</span>
+                    <h3>Accessories</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- FEATURED PRODUCTS -->
+        <section class="section-title-row">
+            <h2>Featured Products</h2>
+            <a href="products.html">View All</a>
+        </section>
+
+        <div class="product-grid" id="featured-products-grid">
+            <!-- Dynamically Loaded -->
+        </div>
+    </main>
+
+    <!-- GLOBAL FOOTER -->
+    <footer id="global-footer"></footer>
+
+    <!-- SCRIPTS -->
+    <script src="assets/js/db.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        // Load featured products dynamically
+        document.addEventListener("DOMContentLoaded", () => {
+            const grid = document.getElementById("featured-products-grid");
+            if (!grid) return;
+
+            const products = getProducts().slice(0, 3); // Get first 3 products
+            
+            if (products.length === 0) {
+                grid.innerHTML = "<p>No products available.</p>";
+                return;
+            }
+
+            grid.innerHTML = products.map(p => {
+                const categories = getCategories();
+                const categoryName = categories.find(c => c.id === p.categoryId)?.name || "Fashion";
+
+                return `
+                    <div class="card product-card fade-in">
+                        <div class="product-img-wrapper">
+                            <img src="${p.imageUrl}" alt="${p.productName}">
+                        </div>
+                        <div class="product-details-box">
+                            <span class="product-category">${categoryName}</span>
+                            <h3 class="product-title">${p.productName}</h3>
+                            <div class="product-price-row">
+                                <span class="product-price">₹${p.price.toLocaleString("en-IN")}</span>
+                                <a href="product-details.html?id=${p.productId}" class="btn product-view-btn">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        });
+    </script>
+</body>
+</html>

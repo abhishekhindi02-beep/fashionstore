@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - FashionStore</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/checkout.css">
+</head>
+<body>
+
+    <!-- GLOBAL NAVBAR -->
+    <header id="global-header"></header>
+
+    <!-- CHECKOUT MAIN GRID -->
+    <main class="container">
+        <div class="checkout-layout">
+            
+            <!-- Left Side: Order Items Summary -->
+            <div class="checkout-left-column">
+                <h2 class="checkout-section-title">Review Items</h2>
+                <div class="checkout-box">
+                    <div class="checkout-items-list" id="checkout-items-list">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Address, Payment & Total -->
+            <div class="checkout-right-column">
+                <h2 class="checkout-section-title">Order Details</h2>
+                
+                <form class="checkout-form" id="checkout-form-submit">
+                    <!-- Delivery Address -->
+                    <div class="checkout-box">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="deliveryAddress">Delivery Address</label>
+                            <textarea id="deliveryAddress" required placeholder="Enter full delivery address here..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="checkout-box">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="paymentMethod">Payment Method</label>
+                            <select id="paymentMethod" required>
+                                <option value="COD">Cash On Delivery (COD)</option>
+                                <option value="UPI">UPI / Digital Wallet</option>
+                                <option value="CARD">Credit / Debit Card</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Cost Summary rows -->
+                    <div class="checkout-box">
+                        <h3 style="font-family: var(--font-heading); font-size:16px; margin-bottom:15px; text-transform:uppercase; letter-spacing:0.5px; color:var(--dark-muted)">Price Breakdown</h3>
+                        <div id="checkout-summary-rows">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn summary-btn">Place Order</button>
+                </form>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- GLOBAL FOOTER -->
+    <footer id="global-footer"></footer>
+
+    <!-- SCRIPTS -->
+    <script src="assets/js/db.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/checkout.js"></script>
+</body>
+</html>

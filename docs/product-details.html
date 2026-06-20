@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - FashionStore</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/product-details.css">
+</head>
+<body>
+
+    <!-- GLOBAL NAVBAR -->
+    <header id="global-header"></header>
+
+    <!-- PRODUCT DETAILS MAIN GRID -->
+    <main class="container">
+        <div class="details-grid" id="details-root">
+            <!-- Loaded dynamically -->
+        </div>
+    </main>
+
+    <!-- GLOBAL FOOTER -->
+    <footer id="global-footer"></footer>
+
+    <!-- SCRIPTS -->
+    <script src="assets/js/db.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const root = document.getElementById("details-root");
+            if (!root) return;
+
+            // Get product id from URL query (?id=X)
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get("id");
+            
+            if (!productId) {
+                renderError("No product selected.");
+                return;
+            }
+
+            const product = getProductById(productId);
+            if (!product) {
+                renderError("Product not found.");
+                return;
+            }
+
+            // Get category name
+            const categories = getCategories();
+            const categoryName = categories.find(c => c.id === product.categoryId)?.name || "Fashion";
+
+            // Render Product Details UI
+            root.innerHTML = `
+                <!-- Image Side -->
+                <div class="image-section">
+                    <img src="${product.imageUrl}" alt="${product.productName}">
+                </div>
+
+                <!-- Info Side -->
+                <div class="info-section">
+                    <span class="details-category">${categoryName}</span>
+                    <h1>${product.productName}</h1>
+                    <div class="details-price">₹${product.price.toLocaleString("en-IN")}</div>
+                    
+                    <p class="details-description">${product.description}</p>
+
+                    <!-- Add To Cart Options -->
+                    <form class="options-form" id="add-to-cart-form">
+                        <div>
+                            <h4 class="size-selector-title">Select Size:</h4>
+                            <div class="size-grid">
+                                ${product.sizes.map((s, index) => `
+                                    <label class="size-pill">
+                                        <input type="radio" name="sizeLabel" value="${s.sizeLabel}" required ${index === 0 ? 'checked' : ''}>
+                                        <span class="size-pill-label">${s.sizeLabel}</span>
+                                    </label>
+                                `).join("")}
+                            </div>
+                        </div>
+
+                        <div class="action-area">
+                            <!-- Quantity Controls -->
+                            <div class="qty-selector">
+                                <button type="button" class="qty-btn" id="qty-minus">-</button>
+                                <input type="number" id="qty-input" class="qty-input" value="1" min="1" max="10" readonly>
+                                <button type="button" class="qty-btn" id="qty-plus">+</button>
+                            </div>
+
+                            <button type="submit" class="btn btn-add-cart">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                                Add to Cart
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            // Quantity Increment/Decrement Listeners
+            const btnMinus = document.getElementById("qty-minus");
+            const btnPlus = document.getElementById("qty-plus");
+            const qtyInput = document.getElementById("qty-input");
+
+            btnMinus.addEventListener("click", () => {
+                let val = parseInt(qtyInput.value);
+                if (val > 1) {
+                    qtyInput.value = val - 1;
+                }
+            });
+
+            btnPlus.addEventListener("click", () => {
+                let val = parseInt(qtyInput.value);
+                if (val < 10) {
+                    qtyInput.value = val + 1;
+                }
+            });
+
+            // Form Submit Listener (Cart Action)
+            const cartForm = document.getElementById("add-to-cart-form");
+            cartForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                // 1. Force Login Check
+                const currentUser = checkAuth();
+                if (!currentUser) return; // checkAuth will automatically redirect to login
+
+                const selectedSize = document.querySelector('input[name="sizeLabel"]:checked').value;
+                const quantity = parseInt(qtyInput.value);
+
+                // Add to user cart
+                addToCart(currentUser.userId, product, selectedSize, quantity);
+            });
+        });
+
+        // Add item to local storage cart
+        function addToCart(userId, product, size, qty) {
+            const cartKey = `cart_${userId}`;
+            let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+
+            // Check if item already exists with exact product_id AND size
+            const existingItem = cartItems.find(item => 
+                item.productId === product.productId && 
+                item.sizeLabel === size
+            );
+
+            if (existingItem) {
+                existingItem.quantity += qty;
+            } else {
+                // Generate a mock unique cart item ID
+                const cartItemId = cartItems.length > 0 ? cartItems[cartItems.length - 1].cartItemId + 1 : 1;
+                cartItems.push({
+                    cartItemId,
+                    cartId: userId, // matching user id
+                    productId: product.productId,
+                    sizeLabel: size,
+                    quantity: qty,
+                    unitPrice: product.price
+                });
+            }
+
+            localStorage.setItem(cartKey, JSON.stringify(cartItems));
+            updateCartCount();
+
+            // Provide visual feedback (Toast or alert)
+            alert(`${product.productName} (Size: ${size}, Qty: ${qty}) added to your cart successfully!`);
+        }
+
+        function renderError(message) {
+            document.getElementById("details-root").innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--dark-muted);">
+                    <p style="font-size: 20px; font-weight: 700;">Error: ${message}</p>
+                    <a href="products.html" class="btn" style="margin-top: 20px;">Back to Catalog</a>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

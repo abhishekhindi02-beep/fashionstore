@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Products - FashionStore</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/products.css">
+</head>
+<body>
+
+    <!-- GLOBAL NAVBAR -->
+    <header id="global-header"></header>
+
+    <!-- MAIN CATALOG CONTAINER -->
+    <main class="container">
+        <div class="catalog-layout">
+            
+            <!-- Filters Toolbar -->
+            <div class="filter-bar fade-in">
+                <!-- Search Input -->
+                <div class="search-input-group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
+                    <input type="text" id="search-box" placeholder="Search products...">
+                </div>
+
+                <!-- Category Chips -->
+                <div class="filter-options" id="category-chips">
+                    <span class="filter-chip active" data-id="all">All</span>
+                    <!-- Loaded dynamically -->
+                </div>
+
+                <!-- Sort Order -->
+                <div class="sort-select">
+                    <select id="sort-box">
+                        <option value="default">Sort by: Default</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Products Results Grid -->
+            <div class="product-grid" id="catalog-products-grid">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <!-- GLOBAL FOOTER -->
+    <footer id="global-footer"></footer>
+
+    <!-- SCRIPTS -->
+    <script src="assets/js/db.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchBox = document.getElementById("search-box");
+            const sortBox = document.getElementById("sort-box");
+            const categoryChipsContainer = document.getElementById("category-chips");
+            const grid = document.getElementById("catalog-products-grid");
+
+            let activeCategory = "all";
+            let searchQuery = "";
+            let sortBy = "default";
+
+            // Get initial category filter from URL query param (?category=X)
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryParam = urlParams.get("category");
+            if (categoryParam) {
+                activeCategory = categoryParam;
+            }
+
+            // Render Category Chips
+            const categories = getCategories();
+            categoryChipsContainer.innerHTML = `
+                <span class="filter-chip ${activeCategory === "all" ? "active" : ""}" data-id="all">All</span>
+                ${categories.map(c => `
+                    <span class="filter-chip ${activeCategory == c.id ? "active" : ""}" data-id="${c.id}">${c.name}</span>
+                `).join("")}
+            `;
+
+            // Event Listeners for Filtering
+            categoryChipsContainer.addEventListener("click", (e) => {
+                if (e.target.classList.contains("filter-chip")) {
+                    document.querySelectorAll(".filter-chip").forEach(chip => chip.classList.remove("active"));
+                    e.target.classList.add("active");
+                    activeCategory = e.target.dataset.id;
+                    
+                    // Update URL query parameters silently
+                    const newUrl = new URL(window.location.href);
+                    if (activeCategory === "all") {
+                        newUrl.searchParams.delete("category");
+                    } else {
+                        newUrl.searchParams.set("category", activeCategory);
+                    }
+                    window.history.replaceState({}, "", newUrl);
+
+                    filterAndRender();
+                }
+            });
+
+            searchBox.addEventListener("input", (e) => {
+                searchQuery = e.target.value.toLowerCase().trim();
+                filterAndRender();
+            });
+
+            sortBox.addEventListener("change", (e) => {
+                sortBy = e.target.value;
+                filterAndRender();
+            });
+
+            // Filtering & Sorting Execution
+            function filterAndRender() {
+                let filtered = getProducts();
+
+                // 1. Filter by category
+                if (activeCategory !== "all") {
+                    filtered = filtered.filter(p => p.categoryId === parseInt(activeCategory));
+                }
+
+                // 2. Filter by search
+                if (searchQuery) {
+                    filtered = filtered.filter(p => 
+                        p.productName.toLowerCase().includes(searchQuery) || 
+                        p.description.toLowerCase().includes(searchQuery)
+                    );
+                }
+
+                // 3. Sort
+                if (sortBy === "price-low") {
+                    filtered.sort((a, b) => a.price - b.price);
+                } else if (sortBy === "price-high") {
+                    filtered.sort((a, b) => b.price - a.price);
+                }
+
+                renderProducts(filtered);
+            }
+
+            function renderProducts(list) {
+                if (list.length === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--dark-muted);">
+                            <p style="font-size: 18px; font-weight: 600;">No products matched your search filters.</p>
+                            <p style="margin-top: 8px;">Try adjusting your keywords or category choice.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = list.map(p => {
+                    const catName = categories.find(c => c.id === p.categoryId)?.name || "Fashion";
+                    return `
+                        <div class="card product-card fade-in">
+                            <div class="product-img-wrapper">
+                                <img src="${p.imageUrl}" alt="${p.productName}">
+                            </div>
+                            <div class="product-details-box">
+                                <span class="product-category">${catName}</span>
+                                <h3 class="product-title">${p.productName}</h3>
+                                <div class="product-price-row">
+                                    <span class="product-price">₹${p.price.toLocaleString("en-IN")}</span>
+                                    <a href="product-details.html?id=${p.productId}" class="btn product-view-btn">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+            }
+
+            // Run initial load
+            filterAndRender();
+        });
+    </script>
+</body>
+</html>

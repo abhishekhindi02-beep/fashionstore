@@ -1,0 +1,230 @@
+.details-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 50px;
+    background-color: var(--white);
+    padding: 40px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* Image Section */
+.image-section {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background-color: #f8fafc;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1/1;
+}
+
+.image-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.image-section:hover img {
+    transform: scale(1.03);
+}
+
+/* Info Section */
+.info-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.details-category {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.info-section h1 {
+    font-family: var(--font-heading);
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--dark);
+    line-height: 1.2;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.details-price {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.details-description {
+    color: var(--dark-muted);
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 30px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Options Form */
+.options-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.size-selector-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 12px;
+}
+
+.size-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.size-pill {
+    position: relative;
+    cursor: pointer;
+}
+
+.size-pill input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.size-pill-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 54px;
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dark-muted);
+    background-color: var(--white);
+    transition: var(--transition);
+    user-select: none;
+}
+
+.size-pill input:checked + .size-pill-label {
+    border-color: var(--primary);
+    color: var(--primary);
+    background-color: var(--primary-light);
+    box-shadow: 0 0 0 2px var(--primary);
+}
+
+.size-pill:hover .size-pill-label {
+    border-color: var(--dark-muted);
+    color: var(--dark);
+}
+
+.stock-indicator {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.stock-ok {
+    color: var(--success);
+}
+
+.stock-low {
+    color: #f59e0b;
+}
+
+.stock-out {
+    color: var(--error);
+}
+
+/* Action Area */
+.action-area {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+.qty-selector {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    height: 52px;
+    overflow: hidden;
+}
+
+.qty-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 600;
+    width: 44px;
+    height: 100%;
+    color: var(--dark-muted);
+    transition: var(--transition);
+}
+
+.qty-btn:hover {
+    background-color: var(--light);
+    color: var(--dark);
+}
+
+.qty-input {
+    width: 40px;
+    height: 100%;
+    border: none;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dark);
+    background: transparent;
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.btn-add-cart {
+    flex: 1;
+    height: 52px;
+}
+
+@media (max-width: 900px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 24px;
+    }
+    
+    .info-section h1 {
+        font-size: 28px;
+    }
+}
